@@ -1,28 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
+import { SettingsContext } from '../contexts/SettingsContext';
 
 const SettingsPanel = ({ onClose }) => {
-  const [settings, setSettings] = useState({
-    darkMode: false,
-    gesturesEnabled: true,
-    toggleKey: 'F2',
-  });
-
-  useEffect(() => {
-    const savedSettings = JSON.parse(localStorage.getItem('erudaInjectorSettings') || '{}');
-    setSettings(prev => ({ ...prev, ...savedSettings }));
-  }, []);
+  const { settings, updateSettings } = useContext(SettingsContext);
 
   const handleSettingChange = (key, value) => {
-    setSettings(prev => {
-      const newSettings = { ...prev, [key]: value };
-      localStorage.setItem('erudaInjectorSettings', JSON.stringify(newSettings));
-      return newSettings;
-    });
+    updateSettings({ [key]: value });
   };
 
   return (
@@ -49,6 +37,14 @@ const SettingsPanel = ({ onClose }) => {
               id="gesturesEnabled"
               checked={settings.gesturesEnabled}
               onCheckedChange={(checked) => handleSettingChange('gesturesEnabled', checked)}
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="includeAudio">Include Audio Files</Label>
+            <Switch
+              id="includeAudio"
+              checked={settings.includeAudio}
+              onCheckedChange={(checked) => handleSettingChange('includeAudio', checked)}
             />
           </div>
           <div className="space-y-2">
