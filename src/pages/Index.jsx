@@ -7,6 +7,7 @@ import ErudaInjector from '../components/ErudaInjector';
 import MediaScraper from '../components/MediaScraper';
 import ElementPicker from '../components/ElementPicker';
 import SettingsPanel from '../components/SettingsPanel';
+import GestureHandler from '../components/GestureHandler';
 
 const Index = () => {
   const [isErudaActive, setIsErudaActive] = useState(false);
@@ -16,10 +17,8 @@ const Index = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Load saved settings from localStorage
     const savedSettings = JSON.parse(localStorage.getItem('erudaInjectorSettings') || '{}');
     setIsErudaActive(savedSettings.erudaActive || false);
-    // Apply other saved settings here
   }, []);
 
   const toggleEruda = () => {
@@ -46,6 +45,18 @@ const Index = () => {
     });
   };
 
+  const handleSwipeUp = () => {
+    toggleEruda();
+  };
+
+  const handleSwipeDown = () => {
+    toggleScraper();
+  };
+
+  const handleLongPress = () => {
+    togglePicker();
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4">
       <h1 className="text-2xl font-bold mb-4 text-center text-gray-800 dark:text-gray-200">
@@ -70,6 +81,12 @@ const Index = () => {
       {isScraperActive && <MediaScraper />}
       {isPickerActive && <ElementPicker />}
       {showSettings && <SettingsPanel onClose={() => setShowSettings(false)} />}
+
+      <GestureHandler
+        onSwipeUp={handleSwipeUp}
+        onSwipeDown={handleSwipeDown}
+        onLongPress={handleLongPress}
+      />
 
       <div className="fixed bottom-4 right-4 flex gap-2">
         <Button size="icon" variant="outline" onClick={() => toast({ title: "Download", description: "Downloading selected media..." })}>

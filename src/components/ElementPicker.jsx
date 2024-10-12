@@ -3,6 +3,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 const ElementPicker = () => {
   const [selectedElements, setSelectedElements] = useState([]);
+  const [hoveredElement, setHoveredElement] = useState(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -25,10 +26,22 @@ const ElementPicker = () => {
       });
     };
 
+    const handleElementHover = (event) => {
+      setHoveredElement(event.target);
+    };
+
+    const handleElementLeave = () => {
+      setHoveredElement(null);
+    };
+
     document.body.addEventListener('click', handleElementClick, true);
+    document.body.addEventListener('mouseover', handleElementHover, true);
+    document.body.addEventListener('mouseout', handleElementLeave, true);
 
     return () => {
       document.body.removeEventListener('click', handleElementClick, true);
+      document.body.removeEventListener('mouseover', handleElementHover, true);
+      document.body.removeEventListener('mouseout', handleElementLeave, true);
     };
   }, [toast]);
 
@@ -37,12 +50,19 @@ const ElementPicker = () => {
       el.style.outline = '2px solid blue';
     });
 
+    if (hoveredElement && !selectedElements.includes(hoveredElement)) {
+      hoveredElement.style.outline = '2px solid red';
+    }
+
     return () => {
       selectedElements.forEach(el => {
         el.style.outline = '';
       });
+      if (hoveredElement) {
+        hoveredElement.style.outline = '';
+      }
     };
-  }, [selectedElements]);
+  }, [selectedElements, hoveredElement]);
 
   return null;
 };
